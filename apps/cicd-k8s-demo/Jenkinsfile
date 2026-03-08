@@ -8,7 +8,8 @@ pipeline {
     }
 
     environment {
-        DEPLOY_REPO_BRANCH = 'master'
+        DEPLOY_REPO = 'github.com/dannyyyyS/cicd-k8s-demo-deployment.git'
+        DEPLOY_REPO_BRANCH = 'main'
         GIT_USER_NAME = 'jenkins'
         GIT_USER_EMAIL = 'jenkins@example.com'
     }
@@ -62,7 +63,7 @@ pipeline {
 
                         git commit -m "Update ${APP_NAME} image tag to ${IMAGE_TAG}"
 
-                        git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/dannyyyyS/cicd-k8s-demo-deployment.git HEAD:${DEPLOY_REPO_BRANCH}
+                        git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${DEPLOY_REPO} ${DEPLOY_REPO_BRANCH}
                     '''
                 }
             }
