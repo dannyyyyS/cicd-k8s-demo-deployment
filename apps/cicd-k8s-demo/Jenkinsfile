@@ -63,7 +63,7 @@ pipeline {
 
                         git commit -m "Update ${APP_NAME} image tag to ${IMAGE_TAG}"
 
-                        git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${DEPLOY_REPO} ${DEPLOY_REPO_BRANCH}
+                        git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${DEPLOY_REPO} HEAD:refs/heads/${DEPLOY_REPO_BRANCH}
                     '''
                 }
             }
