@@ -6,4 +6,4 @@ resources:
 
 images:
   - name: smsoooo/cicd-k8s-demo
-    newTag: 1.0-ca084e9
+    newTag: 1.0-1ed9a08
