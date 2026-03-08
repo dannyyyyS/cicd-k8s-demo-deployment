@@ -38,7 +38,7 @@ pipeline {
         stage('Update Kustomization') {
             steps {
                 sh '''
-                    cd deployment-repo/apps/${APP_NAME}/overlays/${TARGET_ENV}
+                    cd apps/${APP_NAME}/overlays/${TARGET_ENV}
                     sed -i 's#newTag: .*#newTag: '"${IMAGE_TAG}"'#' kustomization.yaml
                     echo "Updated kustomization.yaml:"
                     cat kustomization.yaml
