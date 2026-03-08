@@ -1,0 +1,71 @@
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'APP_NAME', defaultValue: 'cicd-demo', description: 'Application name')
+        string(name: 'IMAGE_TAG', defaultValue: '', description: 'Docker image tag')
+        string(name: 'TARGET_ENV', defaultValue: 'dev', description: 'Target environment')
+    }
+
+    environment {
+        DEPLOY_REPO_BRANCH = 'master'
+        GIT_USER_NAME = 'jenkins'
+        GIT_USER_EMAIL = 'jenkins@example.com'
+    }
+
+    stages {
+        stage('Validate Params') {
+            steps {
+                script {
+                    if (!params.IMAGE_TAG?.trim()) {
+                        error("IMAGE_TAG is required")
+                    }
+                }
+            }
+        }
+
+        stage('Show Workspace') {
+            steps {
+                sh '''
+                    echo "Current workspace:"
+                    pwd
+                    echo "Repo root files:"
+                    ls -la
+                '''
+            }
+        }
+
+        stage('Update Kustomization') {
+            steps {
+                sh '''
+                    cd deployment-repo/apps/${APP_NAME}/overlays/${TARGET_ENV}
+                    sed -i 's#newTag: .*#newTag: '"${IMAGE_TAG}"'#' kustomization.yaml
+                    echo "Updated kustomization.yaml:"
+                    cat kustomization.yaml
+                '''
+            }
+        }
+
+        stage('Commit and Push') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'github',
+                    usernameVariable: 'GIT_USERNAME',
+                    passwordVariable: 'GIT_PASSWORD'
+                )]) {
+                    sh '''
+                        git config user.name "${GIT_USER_NAME}"
+                        git config user.email "${GIT_USER_EMAIL}"
+
+                        git add .
+                        git diff --cached --quiet && echo "No changes detected" && exit 0
+
+                        git commit -m "Update ${APP_NAME} image tag to ${IMAGE_TAG}"
+
+                        git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/dannyyyyS/cicd-k8s-demo-deployment.git HEAD:${DEPLOY_REPO_BRANCH}
+                    '''
+                }
+            }
+        }
+    }
+}
