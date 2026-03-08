@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'APP_NAME', defaultValue: 'cicd-demo', description: 'Application name')
+        string(name: 'APP_NAME', defaultValue: 'cicd-k8s-demo', description: 'Application name')
         string(name: 'IMAGE_TAG', defaultValue: '', description: 'Docker image tag')
         string(name: 'TARGET_ENV', defaultValue: 'dev', description: 'Target environment')
     }
